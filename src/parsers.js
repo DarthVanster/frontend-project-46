@@ -1,15 +1,12 @@
 import yaml from 'js-yaml';
 
-function parse(data, format) {
-  switch (format) {
-    case 'json':
-      return JSON.parse(data);
-    case 'yml':
-    case 'yaml':
+export default (type, data) => {
+  switch (type) {
+    case '.yml':
       return yaml.load(data);
+    case '.json':
+      return JSON.parse(data);
     default:
-      throw new Error(`Format file ${data} is not correct`);
+      throw new Error(`Unknown file type ${type}`);
   }
-}
-
-export default parse;
+};
