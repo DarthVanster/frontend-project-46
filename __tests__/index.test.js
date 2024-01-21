@@ -1,21 +1,37 @@
+import { test, expect } from '@jest/globals';
 import { fileURLToPath } from 'url';
-import fs from 'fs';
 import path from 'path';
-import genDiff from '../src/index.js';
+import gendiff from '../index.js';
+import { stylishDiffs, plainDiffs, JSONDiffs } from '../__fixtures__/expected-diffs.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const getFixturePath = (filename) => path.join(__dirname, '../__fixtures__/', filename);
+const json1 = getFixturePath('file1.json');
+const json2 = getFixturePath('file2.json');
+const yml1 = getFixturePath('file1.yml');
+const yml2 = getFixturePath('file2.yml');
 
-const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
-const readFixture = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
+test('json with stylish format', () => {
+  expect(gendiff(json1, json2, 'stylish')).toEqual(stylishDiffs);
+});
 
-test.each([
-  ['json', 'stylish', readFixture('expected_file_stylish.txt')],
-  ['yml', 'stylish', readFixture('expected_file_stylish.txt')],
-  ['json', 'plain', readFixture('expected_file_plain.txt')],
-  ['yml', 'plain', readFixture('expected_file_plain.txt')],
-  ['json', 'json', readFixture('expected_file_json.txt')],
-  ['yml', 'json', readFixture('expected_file_json.txt')],
-])('all test gendiff', (extension, format, expected) => {
-  expect(genDiff(getFixturePath(`file1.${extension}`), getFixturePath(`file2.${extension}`), format)).toEqual(expected);
+test('yml with stylish format', () => {
+  expect(gendiff(yml1, yml2, 'stylish')).toEqual(stylishDiffs);
+});
+
+test('json with plain format', () => {
+  expect(gendiff(json1, json2, 'plain')).toEqual(plainDiffs);
+});
+
+test('yml with plain format', () => {
+  expect(gendiff(yml1, yml2, 'plain')).toEqual(plainDiffs);
+});
+
+test('json with json format', () => {
+  expect(gendiff(json1, json2, 'json')).toEqual(JSONDiffs);
+});
+
+test('yml with json format', () => {
+  expect(gendiff(yml1, yml2, 'json')).toEqual(JSONDiffs);
 });
