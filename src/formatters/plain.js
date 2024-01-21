@@ -1,41 +1,35 @@
-function getString(value) {
-  switch (typeof value) {
-    case 'object':
-      return value == null ? value : '[complex value]';
-    case 'string':
-      return `'${value}'`;
-    default:
-      return value;
-  }
-}
+import _ from 'lodash';
 
-const data = {
-  added: 'was added with value:',
-  deleted: 'was removed',
-  changed: 'was updated. From',
+const normalizeValue = (value) => {
+  if (!_.isPlainObject(value)) {
+    return typeof value === 'string' ? `'${value}'` : value;
+  }
+  return '[complex value]';
 };
 
-function getPlain(tree) {
-  function iter(object, path) {
-    const result = object.map((key) => {
-      const fullKey = `${path}${key.key}`;
-      if (key.action === 'deleted') {
-        return `Property '${fullKey}' ${data.deleted}`;
+const formatToPlain = (diffsTree, path = '') => {
+  const formattedDiffs = diffsTree
+    .filter(({ status }) => status !== 'unchanged')
+    .map(({
+      key, status, oldValue, newValue, children,
+    }) => {
+      const normalizedOldValue = normalizeValue(oldValue);
+      const normalizedNewValue = normalizeValue(newValue);
+      switch (status) {
+        case 'removed':
+          return `Property '${path}${key}' was removed`;
+        case 'added':
+          return `Property '${path}${key}' was added with value: ${normalizedNewValue}`;
+        case 'changed':
+          if (children) {
+            return formatToPlain(children, `${path}${key}.`);
+          }
+          return `Property '${path}${key}' was updated. From ${normalizedOldValue} to ${normalizedNewValue}`;
+        default:
+          throw new Error(`Unknown status ${status}`);
       }
-      if (key.action === 'added') {
-        return `Property '${fullKey}' ${data.added} ${getString(key.newValue)}`;
-      }
-      if (key.action === 'nested') {
-        return iter(key.children, `${fullKey}.`);
-      }
-      if (key.action === 'changed') {
-        return `Property '${fullKey}' ${data.changed} ${getString(key.oldValue)} to ${getString(key.newValue)}`;
-      }
-      return null;
     });
-    return result.filter((item) => item != null).join('\n');
-  }
-  return iter(tree, '');
-}
+  return formattedDiffs.join('\n');
+};
 
-export default getPlain;
+export default formatToPlain;
