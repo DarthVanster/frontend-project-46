@@ -1,50 +1,44 @@
 import _ from 'lodash';
 
-const data = {
-  added: '+ ',
-  deleted: '- ',
-  space: '  ',
+const generateIndent = (level) => (level === 0 ? '' : ' '.repeat(level * 4));
+
+const normalizeValue = (value, level) => {
+  const indentWide = generateIndent(level + 2);
+  const indent = generateIndent(level + 1);
+  if (!_.isPlainObject(value)) {
+    return value;
+  }
+  const result = _.keys(value).map((key) => `${indentWide}${key}: ${normalizeValue(value[key], level + 1)}`);
+  return `{\n${result.join('\n')}\n${indent}}`;
 };
 
-function getSpace(depth, symbol) {
-  const space = '    ';
-  if (!symbol) {
-    return space.repeat(depth);
-  }
-  if (depth === 0 && !symbol) {
-    return '';
-  }
-  return `${space.repeat(depth)}  ${symbol}`;
-}
-
-function stringify(value, level) {
-  function iter(currentValue, depth) {
-    if (!_.isObject(currentValue)) {
-      return `${currentValue}`;
+const formatToStylish = (diffsTree, level = 0) => {
+  const indentWide = generateIndent(level + 1);
+  const indent = generateIndent(level);
+  const indentWithPlus = `${indent}  + `;
+  const indentWithMinus = `${indent}  - `;
+  const formattedDiffs = diffsTree.map(({
+    key, status, oldValue, newValue, children,
+  }) => {
+    const normalizedOldValue = normalizeValue(oldValue, level);
+    const normalizedNewValue = normalizeValue(newValue, level);
+    switch (status) {
+      case 'removed':
+        return `${indentWithMinus}${key}: ${normalizedOldValue}`;
+      case 'added':
+        return `${indentWithPlus}${key}: ${normalizedNewValue}`;
+      case 'unchanged':
+        return `${indentWide}${key}: ${normalizedOldValue}`;
+      case 'changed':
+        if (children) {
+          return `${indentWide}${key}: ${formatToStylish(children, level + 1)}`;
+        }
+        return `${indentWithMinus}${key}: ${normalizedOldValue}\n${indentWithPlus}${key}: ${normalizedNewValue}`;
+      default:
+        throw new Error(`Unknown status ${status}`);
     }
-    const lines = Object.entries(currentValue).map(([key, val]) => `${getSpace(depth + 1, data.space)}${key}: ${iter(val, depth + 1)}`);
-    return ['{', ...lines, `${getSpace(depth + 1)}}`].join('\n');
-  }
-  return iter(value, level);
-}
+  });
+  return `{\n${formattedDiffs.join('\n')}\n${indent}}`;
+};
 
-export default function getStylish(tree) {
-  const iter = (object, depth) => {
-    const result = object.map((key) => {
-      switch (key.action) {
-        case 'deleted':
-          return `${getSpace(depth, data.deleted)}${key.key}: ${stringify(key.oldValue, depth)}`;
-        case 'added':
-          return `${getSpace(depth, data.added)}${key.key}: ${stringify(key.newValue, depth)}`;
-        case 'nested':
-          return `${getSpace(depth, data.space)}${key.key}: ${iter(key.children, depth + 1)}`;
-        case 'changed':
-          return [`${getSpace(depth, data.deleted)}${key.key}: ${stringify(key.oldValue, depth)}\n${getSpace(depth, data.added)}${key.key}: ${stringify(key.newValue, depth)}`];
-        default:
-          return `${getSpace(depth, data.space)}${key.key}: ${stringify(key.oldValue, depth)}`;
-      }
-    });
-    return ['{', ...result, `${getSpace(depth)}}`].join('\n');
-  };
-  return iter(tree, 0);
-}
+export default formatToStylish;
