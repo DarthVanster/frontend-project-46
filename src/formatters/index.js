@@ -1,15 +1,17 @@
-import getStylish from './stylish.js';
-import getPlain from './plain.js';
+import formatToStylish from './stylish.js';
+import formatToPlain from './plain.js';
 
-export default function makeFormat(tree, formatName = 'stylish') {
-  switch (formatName) {
+const formatOutput = (diffs, format = 'stylish') => {
+  switch (format) {
     case 'stylish':
-      return getStylish(tree);
+      return formatToStylish(diffs);
     case 'plain':
-      return getPlain(tree);
+      return formatToPlain(diffs);
     case 'json':
-      return JSON.stringify(tree);
+      return JSON.stringify(diffs);
     default:
-      throw new Error('Output format is not correct');
+      throw new Error(`Unknown format ${format}`);
   }
-}
+};
+
+export default formatOutput;
