@@ -1,7 +1,7 @@
 import { test, expect } from '@jest/globals';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import gendiff from '../index.js';
+import gendiff from '../src/index.js';
 import { stylishDiffs, plainDiffs, JSONDiffs } from '../__fixtures__/expected-diffs.js';
 
 const __filename = fileURLToPath(import.meta.url);
