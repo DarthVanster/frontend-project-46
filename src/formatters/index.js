@@ -10,6 +10,6 @@ export default function makeFormat(tree, formatName = 'stylish') {
     case 'json':
       return JSON.stringify(tree);
     default:
-      throw new Error('Output format is not correct');
+      throw new Error(`${formatName} format is not correct`);
   }
 }
