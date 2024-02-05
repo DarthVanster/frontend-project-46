@@ -25,7 +25,7 @@ const getPlain = (tree) => {
 	case 'added':
           return `Property '${fullKey}' ${data.added} ${getString(key.newValue)}`;
 	case 'nested':
-          return iter(key.children, `Property '${fullKey}.'`);
+          return iter(key.children, `${fullKey}.`);
 	case 'changed':
           return `Property '${fullKey}' ${data.changed} ${getString(key.oldValue)} to ${getString(key.newValue)}`;
 	default:
