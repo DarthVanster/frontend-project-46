@@ -6,7 +6,7 @@ const data = {
   space: '  ',
 };
 
-function getSpace(depth, symbol) {
+const getSpace = (depth, symbol) => {
   const space = '    ';
   if (!symbol) {
     return space.repeat(depth);
@@ -17,8 +17,8 @@ function getSpace(depth, symbol) {
   return `${space.repeat(depth)}  ${symbol}`;
 }
 
-function stringify(value, level) {
-  function iter(currentValue, depth) {
+const stringify = (value, level) => {
+  const iter = (currentValue, depth) => {
     if (!_.isObject(currentValue)) {
       return `${currentValue}`;
     }
@@ -28,7 +28,7 @@ function stringify(value, level) {
   return iter(value, level);
 }
 
-export default function getStylish(tree) {
+const getStylish = (tree) => {
   const iter = (object, depth) => {
     const result = object.map((key) => {
       switch (key.action) {
@@ -48,3 +48,4 @@ export default function getStylish(tree) {
   };
   return iter(tree, 0);
 }
+export default getStylish;

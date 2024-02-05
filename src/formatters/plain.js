@@ -1,4 +1,4 @@
-function getString(value) {
+const getString = (value) => {
   switch (typeof value) {
     case 'object':
       return value == null ? value : '[complex value]';
@@ -15,8 +15,8 @@ const data = {
   changed: 'was updated. From',
 };
 
-function getPlain(tree) {
-  function iter(object, path) {
+const getPlain = (tree) => {
+  const iter = (object, path) => {
     const result = object.map((key) => {
       const fullKey = `${path}${key.key}`;
       switch (key.action) {

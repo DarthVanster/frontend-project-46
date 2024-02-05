@@ -1,7 +1,7 @@
 import getStylish from './stylish.js';
 import getPlain from './plain.js';
 
-export default function makeFormat(tree, formatName = 'stylish') {
+const makeFormat = (tree, formatName = 'stylish') => {
   switch (formatName) {
     case 'stylish':
       return getStylish(tree);
@@ -13,3 +13,4 @@ export default function makeFormat(tree, formatName = 'stylish') {
       throw new Error(`${formatName} format is not correct`);
   }
 }
+export default makeFormat;
