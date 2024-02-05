@@ -12,5 +12,5 @@ const makeFormat = (tree, formatName = 'stylish') => {
     default:
       throw new Error(`${formatName} format is not correct`);
   }
-}
+};
 export default makeFormat;

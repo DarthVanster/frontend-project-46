@@ -7,7 +7,7 @@ const getString = (value) => {
     default:
       return value;
   }
-}
+};
 
 const data = {
   added: 'was added with value:',
@@ -23,18 +23,18 @@ const getPlain = (tree) => {
         case 'deleted':
           return `Property '${fullKey}' ${data.deleted}`;
 	case 'added':
-	  return `Property '${fullKey}' ${data.added} ${getString(key.newValue)}`;
+          return `Property '${fullKey}' ${data.added} ${getString(key.newValue)}`;
 	case 'nested':
-	  return iter(key.children, `Property '${fullKey}'`);
+          return iter(key.children, `Property '${fullKey}.'`);
 	case 'changed':
-	  return `Property '${fullKey}' ${data.changed} ${getString(key.oldValue)} to ${getString(key.newValue)}`;
+          return `Property '${fullKey}' ${data.changed} ${getString(key.oldValue)} to ${getString(key.newValue)}`;
 	default:
-	  return null;
+          return null;
       }
     });
     return result.filter((item) => item != null).join('\n');
-  }
+  };
   return iter(tree, '');
-}
+};
 
 export default getPlain;
