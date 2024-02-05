@@ -1,7 +1,7 @@
 {
   "name": "@hexlet/code",
   "version": "1.0.0",
-  "description": "[![Actions Status](https://github.com/DarthVanster/frontend-project-46/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/DarthVanster/frontend-project-46/actions)",
+  "description": "[![Actions Status](https://github.com/DarthVanster/frontend-project-46/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/DarthVanster/frontend-project-46/actions) The difference calculator project. It compares two files for differences and displays the result on the screen. The result of the comparison can be displayed in different formats. In the file readme.me instructions for installing and running the program.",
   "main": "src/index.js",
   "bin": {
     "gendiff": "bin/gendiff.js"
